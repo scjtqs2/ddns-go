@@ -23,6 +23,8 @@ func (c *Client) Run() {
 	switch c.Config.Type {
 	case config.TYPE_IPV4:
 		c.ipv4Run()
+	case config.TYPE_IPV4_LOCAL:
+		c.ipv4LocalRun()
 	case config.TYPE_IPV6:
 		c.ipv6Run()
 	case config.TYPE_DEFAULT:
@@ -58,6 +60,26 @@ func (c *Client) ipv4Run() {
 	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
 	rsp, err := Get(url)
 	fmt.Printf("ipv4 rsp:%s", rsp)
+}
+
+// ipv4LocalRun ipv4 lan模式运行
+func (c *Client) ipv4LocalRun() {
+	var (
+		ipv4 string
+		err  error
+	)
+	switch c.Config.ExtScript {
+	case "":
+		ipv4, err = GetOutBoundIP()
+	default:
+		ipv4, err = Command(c.Config.ExtScript)
+	}
+	if err != nil {
+		panic(err)
+	}
+	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
+	rsp, err := Get(url)
+	fmt.Printf("ipv4-local rsp:%s", rsp)
 }
 
 // ipv6Run ipv6模式运行

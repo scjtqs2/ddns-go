@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	TYPE_IPV4    = "ipv4"
-	TYPE_IPV6    = "ipv6"
-	TYPE_DEFAULT = "default" // 走默认接口 ipv4的批量修改一批sub为同一公网ip
+	TYPE_IPV4       = "ipv4"
+	TYPE_IPV4_LOCAL = "ipv4-local" // ipv4 lan口的内网地址
+	TYPE_IPV6       = "ipv6"
+	TYPE_DEFAULT    = "default" // 走默认接口 ipv4的批量修改一批sub为同一公网ip
 )
 
 const (
@@ -50,6 +51,7 @@ func Parse() *Config {
 	flag.StringVar(&c.Type, "type", "default", `使用类型：
 default 默认类型 使用公网ipv4地址替换web网站上配置的所有的域名信息
 ipv4  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前网络的公网IP
+ipv4-local  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前设备的 内网ipv4地址 
 ipv6  独立使用。更新 sub.domain 的域名的ipv6地址，默认情况下为使用当前设备对外的IPV6地址
 `)
 	flag.StringVar(&c.ExtScript, "extscript", "", "使用额外脚本来获取ipv4/ipv6地址。不使用留空")
