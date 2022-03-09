@@ -24,7 +24,7 @@ func GetOutBoundIP() (ip string, err error) {
 		return
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	fmt.Println(localAddr.String())
+	// fmt.Println(localAddr.String())
 	ip = strings.Split(localAddr.String(), ":")[0]
 	return
 }
@@ -39,11 +39,11 @@ func GetPublicIPV4() (ip string, err error) {
 func GetOutBoundIPV6() (ip string, err error) {
 	conn, err := net.Dial("udp", "[2400:3200::1]:53")
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	fmt.Println(localAddr.String())
+	// fmt.Println(localAddr.String())
 	iparr := regexp.MustCompile(`^\[([\w+:]+)\]:\d+`).FindAllStringSubmatch(localAddr.String(), -1)
 	if len(iparr) < 1 {
 		err = errors.New("获取ipv6地址失败")
