@@ -27,3 +27,7 @@ require (
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
+
+replace (
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.7 // 修复安全漏洞
+)
