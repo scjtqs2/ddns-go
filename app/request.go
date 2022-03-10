@@ -2,9 +2,9 @@ package app
 
 import (
 	"errors"
-	"fmt"
 	"github.com/guonaihong/gout"
 	"github.com/scjtqs2/ddns-go/config"
+	log "github.com/sirupsen/logrus"
 	"net"
 	"regexp"
 	"strings"
@@ -20,7 +20,7 @@ func Get(URL string) (rsp string, err error) {
 func GetOutBoundIP() (ip string, err error) {
 	conn, err := net.Dial("udp", "223.5.5.5:53")
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)

@@ -1,9 +1,10 @@
 package app
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 // Command 执行命令
@@ -23,9 +24,10 @@ func Command(cmd string) (string, error) {
 	}
 	res, err := proc.Output()
 	if err != nil {
-		fmt.Printf("extscript exec faild cmd=%s , err=%s", cmd, err.Error())
+		log.Errorf("extscript exec faild cmd=%s , err=%s", cmd, err.Error())
 		return "", err
 	}
-	fmt.Printf("extscript exec success cmd=%d , rsp=%s", cmd, string(res))
-	return string(res), nil
+	log.Infof("extscript exec success cmd=%s , rsp=%s", cmd, string(res))
+
+	return strings.TrimSpace(string(res)), nil
 }

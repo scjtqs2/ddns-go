@@ -3,12 +3,15 @@ package app
 
 import (
 	"fmt"
+	"github.com/robfig/cron/v3"
 	"github.com/scjtqs2/ddns-go/config"
+	log "github.com/sirupsen/logrus"
 )
 
 // Client 客户端的实体类
 type Client struct {
 	Config *config.Config
+	Cron   *cron.Cron
 }
 
 // NewClient 新建客户端
@@ -19,7 +22,22 @@ func NewClient(cof *config.Config) *Client {
 }
 
 // Run 运行
-func (c *Client) Run() {
+func (c *Client) Run() error {
+	if !c.Config.Server {
+		c.checkType()
+		return nil
+	}
+	c.Cron = cron.New(cron.WithParser(cron.NewParser(
+		cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
+	)))
+	_, err := c.Cron.AddFunc("* * * * *", c.checkType)
+	log.Printf("启动服务成功 err:%v", err)
+	c.Cron.Start()
+	return err
+}
+
+// checkType 根据不同的 type选择不同的执行方式
+func (c *Client) checkType() {
 	switch c.Config.Type {
 	case config.TYPE_IPV4:
 		c.ipv4Run()
@@ -39,7 +57,7 @@ func (c *Client) defaultRun() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("default rsp:%s", rsp)
+	log.Infof("default rsp:%s", rsp)
 }
 
 // ipv4Run ipv4模式运行
@@ -59,7 +77,7 @@ func (c *Client) ipv4Run() {
 	}
 	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
 	rsp, err := Get(url)
-	fmt.Printf("ipv4 rsp:%s", rsp)
+	log.Infof("ipv4 rsp:%s", rsp)
 }
 
 // ipv4LocalRun ipv4 lan模式运行
@@ -79,7 +97,7 @@ func (c *Client) ipv4LocalRun() {
 	}
 	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
 	rsp, err := Get(url)
-	fmt.Printf("ipv4-local rsp:%s", rsp)
+	log.Infof("ipv4-local rsp:%s", rsp)
 }
 
 // ipv6Run ipv6模式运行
@@ -102,5 +120,5 @@ func (c *Client) ipv6Run() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("ipv6 rsp:%s", rsp)
+	log.Infof("ipv6 rsp:%s", rsp)
 }
