@@ -70,3 +70,21 @@ example:
 #卸载 
 ./ddns-go -uninstall
 ```
+
+## docker实现
+> docker run -d --name ddns1  -v /ddns-go:/usr/bin/ddns-go alpine /usr/bin/ddns-go  -id 1 -token 123456 -type ipv4 -sub test -domain domain.com -server
+> 
+或者 docker-compose的方式
+```yaml
+version: "3"
+services:
+  ddns:
+    image: alpine
+    restart: always
+    volumes:
+      - ./ddns-go:/usr/bin/ddns-go
+    command:
+      - /bin/sh
+      - -c
+      - /usr/bin/ddns-go  -id 1 -token 123456 -type ipv4 -sub test -domain domain.com -server
+```
