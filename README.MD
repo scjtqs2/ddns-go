@@ -25,7 +25,7 @@ Usage:
   -server
         是否以server方式免crontab方式运行
   -sub string
-        sub子域名 eg: www 仅 type 为 ipv4/ipv4-local 和 ipv6 的时候有用
+        sub子域名 eg: www 仅 type 为 ipv4/ipv4-local 和 ipv6 的时候有用 . 多个子域名用逗号隔开
   -token string
         你的token秘钥
   -type string
