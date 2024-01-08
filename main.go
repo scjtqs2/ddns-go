@@ -140,7 +140,7 @@ func Parse() *config.Config {
 	flag.Int64Var(&c.UserID, "id", 0, "你的用户ID")
 	flag.StringVar(&c.Token, "token", "", "你的token秘钥")
 	flag.StringVar(&c.Sub, "sub", "", "sub子域名 eg: www 仅 type 为 ipv4/ipv4-local 和 ipv6 的时候有用")
-	flag.StringVar(&c.Domain, "domain", "", "主域名 eg: scjtqs.com 仅 type 为 ipv4/ipv4-local 和 ipv6 的时候有用")
+	flag.StringVar(&c.Domain, "domain", "", "主域名 eg: scjtqs.com 仅 type 为 ipv4/ipv4-local 和 ipv6/ipv6-local 的时候有用")
 	flag.StringVar(&c.Type, "type", "default", `使用类型：
 default 默认类型 使用公网ipv4地址替换web网站上配置的所有的域名信息
 ipv4  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前网络的公网IP
