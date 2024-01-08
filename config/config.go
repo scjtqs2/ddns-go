@@ -4,13 +4,14 @@ package config
 const (
 	TYPE_IPV4       = "ipv4"
 	TYPE_IPV4_LOCAL = "ipv4-local" // ipv4 lan口的内网地址
+	TYPE_IPV6_LOCAL = "ipv6-local" // ipv6 lan口的内网地址
 	TYPE_IPV6       = "ipv6"
 	TYPE_DEFAULT    = "default" // 走默认接口 ipv4的批量修改一批sub为同一公网ip
 )
 
 const (
 	BASE_URL   = "https://wx.scjtqs.com"
-	BASE_URLV6 = "https://wx.mobyds.com" // 自动识别ipv6用的接口
+	BASE_URLV6 = "https://wx6.scjtqs.com" // 自动识别ipv6用的接口
 )
 
 // Config 配置信息

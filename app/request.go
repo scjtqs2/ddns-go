@@ -1,18 +1,36 @@
 package app
 
 import (
+	"context"
 	"errors"
 	"github.com/guonaihong/gout"
 	"github.com/scjtqs2/ddns-go/config"
 	log "github.com/sirupsen/logrus"
 	"net"
+	"net/http"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // Get get方式的http请求
 func Get(URL string) (rsp string, err error) {
 	err = gout.GET(URL).BindBody(&rsp).Do()
+	return
+}
+
+// GetIPV4  IPv4 get方式的http请求
+func GetIPV4(URL string) (rsp string, err error) {
+	httpClient := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	var zeroDialer net.Dialer
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		return zeroDialer.DialContext(ctx, "tcp4", addr)
+	}
+	httpClient.Transport = transport
+	err = gout.New(httpClient).GET(URL).BindBody(&rsp).Do()
 	return
 }
 
@@ -32,7 +50,20 @@ func GetOutBoundIP() (ip string, err error) {
 // GetPublicIPV4 获取公网IPV4
 func GetPublicIPV4() (ip string, err error) {
 	url := config.BASE_URL + "/ip.php"
-	return Get(url)
+	ip, err = GetIPV4(url)
+	if ip == "unknow" {
+		return "", errors.New("no ipv4")
+	}
+	return ip, err
+}
+
+func GetPublicIPV6() (ip string, err error) {
+	url := config.BASE_URLV6 + "/ip6.php"
+	ip, err = GetIPV4(url)
+	if ip == "no ipv6" {
+		return "", errors.New("no ipv6")
+	}
+	return ip, err
 }
 
 // GetOutBoundIPV6 获取本地IPV6

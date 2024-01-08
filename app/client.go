@@ -45,6 +45,8 @@ func (c *Client) checkType() {
 		c.ipv4LocalRun()
 	case config.TYPE_IPV6:
 		c.ipv6Run()
+	case config.TYPE_IPV6_LOCAL:
+		c.ipv6LocalRun()
 	case config.TYPE_DEFAULT:
 		c.defaultRun()
 	}
@@ -102,6 +104,29 @@ func (c *Client) ipv4LocalRun() {
 
 // ipv6Run ipv6模式运行
 func (c *Client) ipv6Run() {
+	var (
+		ipv6 string
+		err  error
+	)
+	switch c.Config.ExtScript {
+	case "":
+		ipv6, err = GetPublicIPV6()
+	default:
+		ipv6, err = Command(c.Config.ExtScript)
+	}
+	if err != nil {
+		panic(err)
+	}
+	url := fmt.Sprintf("%s/ddns/client/ipv6?id=%d&token=%s&sub=%s&domain=%s&ipv6=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv6)
+	rsp, err := Get(url)
+	if err != nil {
+		panic(err)
+	}
+	log.Infof("ipv6 rsp:%s", rsp)
+}
+
+// ipv6LocalRun ipv6模式本地运行
+func (c *Client) ipv6LocalRun() {
 	var (
 		ipv6 string
 		err  error

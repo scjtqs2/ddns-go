@@ -146,6 +146,7 @@ default 默认类型 使用公网ipv4地址替换web网站上配置的所有的�
 ipv4  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前网络的公网IP
 ipv4-local  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前设备的 内网ipv4地址 
 ipv6  独立使用。更新 sub.domain 的域名的ipv6地址，默认情况下为使用当前设备对外的IPV6地址
+ipv6-local  独立使用。更新 sub.domain 的域名的ipv4地址，默认情况下为使用当前设备的 内网ipv6地址 
 `)
 	flag.StringVar(&c.ExtScript, "extscript", "", "使用额外脚本来获取ipv4/ipv6地址。不使用留空")
 	flag.BoolVar(&help, "h", false, "show this info")
