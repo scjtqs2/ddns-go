@@ -55,7 +55,7 @@ func (c *Client) checkType() {
 // defaultRun 默认方式运行
 func (c *Client) defaultRun() {
 	url := fmt.Sprintf("%s/ddns/client/id/%d/token/%s", config.BASE_URL, c.Config.UserID, c.Config.Token)
-	rsp, err := Get(url)
+	rsp, err := GetIPV4(url)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +78,7 @@ func (c *Client) ipv4Run() {
 		panic(err)
 	}
 	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
-	rsp, err := Get(url)
+	rsp, err := GetIPV4(url)
 	log.Infof("ipv4 rsp:%s", rsp)
 }
 
