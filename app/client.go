@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"github.com/robfig/cron/v3"
 	"github.com/scjtqs2/ddns-go/config"
+	"github.com/scjtqs2/ddns-go/util"
 	log "github.com/sirupsen/logrus"
+	"io"
+	"strings"
 )
 
 // Client 客户端的实体类
@@ -49,6 +52,8 @@ func (c *Client) checkType() {
 		c.ipv6LocalRun()
 	case config.TYPE_DEFAULT:
 		c.defaultRun()
+	case config.Type_IPV4_OUT:
+		c.ipv4OutRun()
 	}
 }
 
@@ -146,4 +151,42 @@ func (c *Client) ipv6LocalRun() {
 		panic(err)
 	}
 	log.Infof("ipv6 rsp:%s", rsp)
+}
+
+func (c *Client) ipv4OutRun() {
+	ipv4 := c.getIpv4AddrFromUrl()
+	if ipv4 == "" {
+		log.Errorf("get ipv4 addr fail")
+		return
+	}
+	url := fmt.Sprintf("%s/ddns/client/ipv4?id=%d&token=%s&sub=%s&domain=%s&ipv4=%s", config.BASE_URL, c.Config.UserID, c.Config.Token, c.Config.Sub, c.Config.Domain, ipv4)
+	rsp, err := GetIPV4(url)
+	log.Infof("ipv4 rsp:%s,err=%v", rsp, err)
+}
+
+func (c *Client) getIpv4AddrFromUrl() string {
+	client := util.CreateNoProxyHTTPClient("tcp4")
+	urls := strings.Split(config.DefaultIpv4Out, ",")
+	for _, url := range urls {
+		url = strings.TrimSpace(url)
+		resp, err := client.Get(url)
+		if err != nil {
+			log.Errorf("通过接口获取IPv4失败! 接口地址: %s", url)
+			log.Errorf("异常信息: %s", err)
+			continue
+		}
+		defer resp.Body.Close()
+		lr := io.LimitReader(resp.Body, 1024000)
+		body, err := io.ReadAll(lr)
+		if err != nil {
+			log.Errorf("异常信息: %s", err)
+			continue
+		}
+		result := config.Ipv4Reg.FindString(string(body))
+		if result == "" {
+			log.Errorf("获取IPv4结果失败! 接口: %s ,返回值: %s", url, string(body))
+		}
+		return result
+	}
+	return ""
 }
